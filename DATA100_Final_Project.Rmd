@@ -2,7 +2,7 @@
 title: "Final Project: Online Sales Analysis "
 authors: "Khushi Satra, 203383100
           Satinder Kaur
-          Sarroor 
+          Sarroor, 169087012
           Spencer
           Noya"
 ---
