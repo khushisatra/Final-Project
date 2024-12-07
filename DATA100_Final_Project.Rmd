@@ -1,0 +1,21 @@
+---
+title: "Final Project: Online Sales Analysis "
+authors: "Khushi Satra, 203383100
+          Satinder Kaur
+          Sarroor 
+          Spencer
+          Noya"
+---
+
+
+
+```{r}
+library(tidyverse)
+library(tidymodels)
+```
+
+```{r}
+sales <- read.csv("https://raw.githubusercontent.com/khushisatra/Final-Project/refs/heads/main/online_sales_dataset.csv")
+
+glimpse(sales)
+```
