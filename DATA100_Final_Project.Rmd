@@ -1,10 +1,10 @@
 ---
 title: "Final Project: Online Sales Analysis "
 authors: "Khushi Satra, 203383100
-          Satinder Kaur
-          Sarroor, 169087012
-          Spencer
-          Noya"
+          Satinder Kaur, 169109308
+          Sara Haifa, 169087012
+          Spencer Mozeg , 169099531
+          Noya Barak, 
 ---
 
 
