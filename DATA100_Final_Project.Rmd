@@ -59,3 +59,22 @@ ggplot(profit_by_genre, aes(x = reorder(genre, avg_Profit), y = avg_Profit, fill
   coord_flip() +
   labs(title = "Average Profit by Genre", x = "Genre", y = "Average Profit") +
   theme_minimal()
+
+#Exploratory Plot 2 - Compare IMDb scores and profits across genres
+
+genre_summary <- clean_movie_industry|>
+  group_by(genre) |>
+  summarise(avg_Profit = mean(Profit))|>
+  arrange(desc(avg_Profit))
+
+genre_comparison <- clean_movie_industry|>
+  left_join(genre_summary, by = "genre" )
+
+ggplot(genre_comparison, aes(x = reorder(genre, avg_Profit), y = IMDb_score, fill = avg_Profit)) +
+  geom_boxplot(outlier.color = "red", outlier.shape = 16, outlier.size = 2) +
+  coord_flip() +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Avg Profit") +
+  labs(title = "Distribution of IMDb Scores by Genre", 
+       x = "Genre (Ordered by Avg Profit)", 
+       y = "IMDb Score") +
+  theme_minimal()
