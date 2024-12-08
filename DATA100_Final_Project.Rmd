@@ -8,14 +8,24 @@ authors: "Khushi Satra, 203383100
 ---
 
 
-
+#Load packages
 ```{r}
 library(tidyverse)
 library(tidymodels)
 ```
-
+#Load datasets
 ```{r}
-sales <- read.csv("https://raw.githubusercontent.com/khushisatra/Final-Project/refs/heads/main/online_sales_dataset.csv")
+movies_data <- read.csv("https://raw.githubusercontent.com/khushisatra/Final-Project/refs/heads/main/movies.csv")
 
-glimpse(sales)
+movies_data
+view(movies_data)
 ```
+#Step 1: Tidying 
+```{r}
+movies_data_year_country <- movies_data |>
+  mutate(released_date = str_extract(released, "^[A-Za-z]+ \\d{1,2}, \\d{4}")) |>
+  select(-released, -year) 
+movies_data_year_country
+
+```
+
