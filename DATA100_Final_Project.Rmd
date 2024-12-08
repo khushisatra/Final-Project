@@ -47,4 +47,15 @@ clean_movie_industry <- movie_industry|>
 clean_movie_industry
 
 ```
+#Exploratory Plot 1
 
+profit_by_genre <- clean_movie_industry|>
+  group_by(genre)|>
+  summarise(avg_Profit = mean(Profit)) |>
+  arrange(desc(avg_Profit))
+
+ggplot(profit_by_genre, aes(x = reorder(genre, avg_Profit), y = avg_Profit, fill = genre)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  coord_flip() +
+  labs(title = "Average Profit by Genre", x = "Genre", y = "Average Profit") +
+  theme_minimal()
