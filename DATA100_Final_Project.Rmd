@@ -15,17 +15,27 @@ library(tidymodels)
 ```
 #Load datasets
 ```{r}
-movies_data <- read.csv("https://raw.githubusercontent.com/khushisatra/Final-Project/refs/heads/main/movies.csv")
-
-movies_data
-view(movies_data)
+Movie_industry<- read.csv("https://raw.githubusercontent.com/khushisatra/Final-Project/refs/heads/main/movies.csv")
+Movie_industry
 ```
+{r}
+movie_industry <- na.omit(Movie_industry)
+movie_industry
+
 #Step 1: Tidying 
 ```{r}
-movies_data_year_country <- movies_data |>
-  mutate(released_date = str_extract(released, "^[A-Za-z]+ \\d{1,2}, \\d{4}")) |>
-  select(-released, -year) 
-movies_data_year_country
+clean_movie_industry <- movie_industry|>
+  mutate(
+  released_date = str_extract(released, "^[A-Za-z]+ \\d{1,2}, \\d{4}"),
+  hours = runtime%/%60,             
+    minutes = runtime %% 60, 
+    movie_duration = sprintf("%d hours, %d minutes", hours, minutes),
+  genre = as.factor(genre),
+  rating = as.factor(rating),
+   Profit = gross - budget
+  ) |>
+  select(-released, -year, -hours, -minutes, -runtime)
+clean_movie_industry
 
 ```
 
