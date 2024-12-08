@@ -30,11 +30,20 @@ clean_movie_industry <- movie_industry|>
   hours = runtime%/%60,             
     minutes = runtime %% 60, 
     movie_duration = sprintf("%d hours, %d minutes", hours, minutes),
-  genre = as.factor(genre),
-  rating = as.factor(rating),
+  rating = ifelse(rating == "X", "NC-17",
+                         ifelse(rating == "Approved", "G", rating)),
    Profit = gross - budget
   ) |>
-  select(-released, -year, -hours, -minutes, -runtime)
+  select(-released, -year, -hours, -minutes, -runtime)|>
+  filter(rating != "Not Rated" & rating != "Unrated")|>
+   mutate(genre = as.factor(genre),
+  rating = as.factor(rating))|>
+  rename(
+    IMDb_score = score,
+    user_votes = votes,
+    gross_revenue = gross
+  )
+  
 clean_movie_industry
 
 ```
