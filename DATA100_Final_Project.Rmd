@@ -47,17 +47,22 @@ clean_movie_industry <- movie_industry|>
 clean_movie_industry
 
 ```
-#Exploratory Plot 1 - Visualize Average Profit By Genre
+#Exploratory Plot 1 - Visualize Average Profit and Revenue By Genre
 
-profit_by_genre <- clean_movie_industry|>
+profit_revenue <- clean_movie_industry|>
   group_by(genre)|>
-  summarise(avg_Profit = mean(Profit)) |>
-  arrange(desc(avg_Profit))
+  summarise(avg_Profit = mean(Profit, na.rm = TRUE),
+            avg_revenue = mean(gross_revenue, na.rm = TRUE)) %>%
+  pivot_longer(cols = c(avg_Profit, avg_revenue), 
+               names_to = "metric", 
+               values_to = "value")
 
-ggplot(profit_by_genre, aes(x = reorder(genre, avg_Profit), y = avg_Profit, fill = genre)) +
-  geom_bar(stat = "identity", show.legend = FALSE) +
+ggplot(profit_revenue, aes(x = reorder(genre, value), y = value, fill = metric)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_grid(rows = vars(metric))+
   coord_flip() +
-  labs(title = "Average Profit by Genre", x = "Genre", y = "Average Profit") +
+  labs(title = "Comparison of Profit and Revenue by Genre",
+       x = "Genre", y = "Value", fill = "Metric") +
   theme_minimal()
 
 #Exploratory Plot 2 - Compare IMDb scores and profits across genres
