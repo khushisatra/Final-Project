@@ -1,0 +1,142 @@
+---
+title: "Final Project: Online Sales Analysis "
+authors: "Khushi Satra, 203383100
+          Satinder Kaur, 169109308
+          Sara Haifa, 169087012
+          Spencer Mozeg , 169099531
+          Noya Barak, 
+---
+
+
+#Load packages
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(ggplot2)
+```
+#Load datasets
+```{r}
+movie_industry<- read.csv("https://raw.githubusercontent.com/khushisatra/Final-Project/refs/heads/main/movies.csv")
+
+movie_industry$rating[movie_industry$rating == "" ] <- NA
+movie_industry <- na.omit(movie_industry)
+```
+
+
+#Step 1: Tidying 
+```{r}
+
+clean_movie_industry <- movie_industry|>
+  mutate(
+  released_date = str_extract(released, "^[A-Za-z]+ \\d{1,2}, \\d{4}"),
+  hours = runtime%/%60,             
+    minutes = runtime %% 60, 
+    movie_duration = sprintf("%d hours, %d minutes", hours, minutes),
+  rating = ifelse(rating == "X", "NC-17",
+                         ifelse(rating == "Approved", "G", rating)),
+   Profit = gross - budget
+  ) |>
+  select(-released, -year, -hours, -minutes, -runtime)|>
+  filter(rating != "Not Rated" & rating != "Unrated")|>
+   mutate(genre = as.factor(genre),
+  rating = as.factor(rating))|>
+  rename(
+    IMDb_score = score,
+    user_votes = votes,
+    gross_revenue = gross
+  )
+  
+clean_movie_industry
+
+```
+
+#Exploratory Plot 1 - Visualize Average Profit and Revenue By Genre
+```{r}
+profit_revenue <- clean_movie_industry|>
+  group_by(genre)|>
+  summarise(avg_Profit = mean(Profit, na.rm = TRUE),
+            avg_revenue = mean(gross_revenue, na.rm = TRUE)) %>%
+  pivot_longer(cols = c(avg_Profit, avg_revenue), 
+               names_to = "metric", 
+               values_to = "value")
+
+ggplot(profit_revenue, aes(x = reorder(genre, value), y = value/1e6, fill = metric)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  #facet_grid(rows = vars(metric))+
+  coord_flip() +
+  labs(title = "Comparison of Profit and Revenue by Genre",
+       x = "Genre", y = "Value in MIllions ($)", fill = "Metric") +
+  theme_minimal()
+```
+
+#Exploratory Plot 2 - Compare IMDb scores and profits across genres
+```{r}
+genre_summary <- clean_movie_industry|>
+  group_by(genre) |>
+  summarise(avg_Profit = mean(Profit))|>
+  arrange(desc(avg_Profit))
+
+genre_comparison <- clean_movie_industry|>
+  left_join(genre_summary, by = "genre" )
+
+ggplot(genre_comparison, aes(x = reorder(genre, avg_Profit), y = IMDb_score, fill = avg_Profit)) +
+  geom_boxplot(outlier.color = "red", outlier.shape = 16, outlier.size = 2) +
+  coord_flip() +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Avg Profit") +
+  labs(title = "Distribution of IMDb Scores by Genre", 
+       x = "Genre (Ordered by Avg Profit)", 
+       y = "IMDb Score") +
+  theme_minimal()
+```
+
+#Spliting 
+```{r}
+clean_movie_industry_split <- initial_validation_split(clean_movie_industry, prop = c(0.6,0.2)) 
+  
+  clean_movie_ind_val <- validation(clean_movie_industry_split)
+  clean_movie_ind_train <- training(clean_movie_industry_split)
+  clean_movie_ind_test <- testing(clean_movie_industry_split)
+  
+clean_movie_industry_split
+```
+
+#Recipes
+```{r}
+basic_recipe1 <- recipe(Profit ~ gross_revenue + rating, data =  clean_movie_ind_train)|> 
+    step_dummy(all_nominal_predictors()) 
+
+interaction_recipe2 <- recipe(Profit ~ genre + country + IMDb_score + user_votes + budget, data = clean_movie_ind_train) |>
+  step_interact(~ IMDb_score:genre) 
+
+
+clean_movie_ind_recipes <- list(
+  recipe1 = basic_recipe1,
+  recipe2 = interaction_recipe2
+  )
+
+clean_movie_ind_recipes
+```
+#Linear Model 1 
+```{r}
+ggplot(clean_movie_ind_train, aes(x = gross_revenue/1e6 , y = (Profit/1e6), colour = rating)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, color = "blue")+
+  labs(
+    title = "Interaction between Gross Revenue and Profit",
+    x = "Gross Revenue in Million ($)",
+    y = "Profit in Million ($)"
+  )
+```
+
+#Linear Model 2
+```{r}
+ggplot(clean_movie_ind_train, aes(x = IMDb_score * as.numeric(genre), y = Profit/1e6)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Interaction between IMDb Score and Genre vs Profit",
+    x = "IMDb Score * Genre (Interaction)",
+    y = "Profit in Million ($)"
+  )
+
+```
