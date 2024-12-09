@@ -101,22 +101,20 @@ clean_movie_industry_split
 
 #Recipes
 ```
-recipe1 <- recipe(Profit ~ budget + genre, data =  clean_movie_ind_train) |> 
-  step_dummy(all_nominal_predictors()) 
+recipe1 <- recipe(Profit ~ gross_revenue + rating, data =  clean_movie_ind_train)|> 
+step_dummy(all_nominal_predictors()) 
 
-recipe1 #Higher budgets genrally lead to higher profitability; look at how this spreads across genres. 
-
-
-recipe2 <- recipe(Profit ~ IMDb_score + rating, data = clean_movie_ind_train) |>
-  step_dummy(all_nominal_predictors()) 
-
-recipe2 #Higher profits are associated with certain ratings, accoutning quality with IDMB_score
-
+recipe2 <- #create another recipie, be sure to look at checklist
 
 clean_movie_ind_recipes <- list(
-  genre_profit_analysis= recipe1,
-  profit_score = recipe2
+  #rename both recipies here 
   )
 
 clean_movie_ind_recipes
+```
+#Model 1 
+```
+ggplot(clean_movie_ind_train, aes(x = gross_revenue, y = Profit, colour = rating)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) 
 ```
