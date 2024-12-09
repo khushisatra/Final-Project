@@ -12,6 +12,7 @@ authors: "Khushi Satra, 203383100
 ```{r}
 library(tidyverse)
 library(tidymodels)
+library(ggplot2)
 ```
 #Load datasets
 ```{r}
