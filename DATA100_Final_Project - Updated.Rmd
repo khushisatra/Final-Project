@@ -60,12 +60,12 @@ profit_revenue <- clean_movie_industry|>
                names_to = "metric", 
                values_to = "value")
 
-ggplot(profit_revenue, aes(x = reorder(genre, value), y = value, fill = metric)) +
+ggplot(profit_revenue, aes(x = reorder(genre, value), y = value/1e6, fill = metric)) +
   geom_bar(stat = "identity", position = "dodge") +
   #facet_grid(rows = vars(metric))+
   coord_flip() +
   labs(title = "Comparison of Profit and Revenue by Genre",
-       x = "Genre", y = "Value", fill = "Metric") +
+       x = "Genre", y = "Value in MIllions ($)", fill = "Metric") +
   theme_minimal()
 ```
 
@@ -102,23 +102,44 @@ clean_movie_industry_split
 
 #Recipes
 ```{r}
-recipe1 <- recipe(Profit ~ gross_revenue + rating, data =  clean_movie_ind_train)|> 
-step_dummy(all_nominal_predictors()) 
+basic_recipe1 <- recipe(Profit ~ gross_revenue + rating, data =  clean_movie_ind_train)|> 
+    step_dummy(all_nominal_predictors()) 
 
-recipe2 <- #create another recipie, be sure to look at checklist
+interaction_recipe2 <- recipe(Profit ~ genre + country + IMDb_score + user_votes + budget, data = clean_movie_ind_train) |>
+  step_interact(~ IMDb_score:genre) 
+
 
 clean_movie_ind_recipes <- list(
-  #rename both recipies here 
+  recipe1 = basic_recipe1,
+  recipe2 = interaction_recipe2
   )
 
 clean_movie_ind_recipes
 ```
-#Model 1 
+#Linear Model 1 
 ```{r}
-ggplot(clean_movie_ind_train, aes(x = gross_revenue, y = Profit, colour = rating)) +
+ggplot(clean_movie_ind_train, aes(x = gross_revenue/1e6 , y = (Profit/1e6), colour = rating)) +
   geom_point(alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE) 
-``
+  geom_smooth(method = "lm", se = FALSE, color = "blue")+
+  labs(
+    title = "Interaction between Gross Revenue and Profit",
+    x = "Gross Revenue in Million ($)",
+    y = "Profit in Million ($)"
+  )
+```
+
+#Linear Model 2
+```{r}
+ggplot(clean_movie_ind_train, aes(x = IMDb_score * as.numeric(genre), y = Profit/1e6)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Interaction between IMDb Score and Genre vs Profit",
+    x = "IMDb Score * Genre (Interaction)",
+    y = "Profit in Million ($)"
+  )
+
+```
 
 linear_model_workflow<- workflow()|>
   add_model(linear_reg())
