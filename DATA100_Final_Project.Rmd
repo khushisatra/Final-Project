@@ -18,6 +18,9 @@ library(ggplot2)
 ```{r}
 Movie_industry<- read.csv("https://raw.githubusercontent.com/khushisatra/Final-Project/refs/heads/main/movies.csv")
 Movie_industry
+
+movies_industry_data$rating[movies_industry_data$rating == "" ] <- NA
+
 ```
 {r}
 movie_industry <- na.omit(Movie_industry)
