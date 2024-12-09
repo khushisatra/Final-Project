@@ -140,6 +140,11 @@ ggplot(clean_movie_ind_train, aes(x = IMDb_score * as.numeric(genre), y = Profit
   )
 
 ```
+```{r}
+movies_workflow_set <- workflow_set(clean_movie_ind_recipes,models = list(lm= linear_reg()), cross = FALSE)
+
+movies_workflow_set
+```
 
 linear_model_workflow<- workflow()|>
   add_model(linear_reg())
