@@ -83,3 +83,36 @@ ggplot(genre_comparison, aes(x = reorder(genre, avg_Profit), y = IMDb_score, fil
        x = "Genre (Ordered by Avg Profit)", 
        y = "IMDb Score") +
   theme_minimal()
+
+#Spliting 
+```
+clean_movie_industry_split <- initial_validation_split(clean_movie_industry, prop = c(0.6,0.2)) 
+  
+  clean_movie_ind_val <- validation(clean_movie_industry_split)
+  clean_movie_ind_train <- training(clean_movie_industry_split)
+  clean_movie_ind_test <- testing(clean_movie_industry_split)
+  
+clean_movie_industry_split
+```
+
+#Recipes
+```
+recipe1 <- recipe(Profit ~ budget + genre, data =  clean_movie_ind_train) |> 
+  step_dummy(all_nominal_predictors()) 
+
+recipe1 #Higher budgets genrally lead to higher profitability; look at how this spreads across genres. 
+
+
+recipe2 <- recipe(Profit ~ IMDb_score + rating, data = clean_movie_ind_train) |>
+  step_dummy(all_nominal_predictors()) 
+
+recipe2 #Higher profits are associated with certain ratings, accoutning quality with IDMB_score
+
+
+clean_movie_ind_recipes <- list(
+  genre_profit_analysis= recipe1,
+  profit_score = recipe2
+  )
+
+clean_movie_ind_recipes
+```
