@@ -146,12 +146,6 @@ movies_workflow_set <- workflow_set(clean_movie_ind_recipes,models = list(lm= li
 movies_workflow_set
 ```
 
-linear_model_workflow<- workflow()|>
-  add_model(linear_reg())
 
-movies_workflow_set <- workflow_set(
-    preproc = clean_movie_ind_recipes,
-    models = list(lm = linear_reg()))
-movies_workflow_set
 
 
