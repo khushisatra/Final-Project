@@ -4,15 +4,9 @@ authors: "Khushi Satra, 203383100
           Satinder Kaur, 169109308
           Sara Haifa, 169087012
           Spencer Mozeg , 169099531
-          Noya Barak, 169097527
+          Noya Barak, 169097527" 
 ---
-
----
-Introduction: The film industry is a growing zone where factors, including genre, viewer ratings, production expenses, and promotional strategies, influence economic profitability. To enhance decisions and increase profitability, companies need to fully comprehend these factors. The *"Final Project: Online Sales Analysis"* the project explores the relationships between key variables of films and their financial outcomes. We aim to gain insights into the connection between profit and specific characteristics such as budget, revenue, and ratings by analyzing a film dataset. The analysis includes the use of advanced statistical modeling techniques, thorough data cleansing, and exploratory visualizations. To estimate earnings based on factors like production budgets, audience ratings, and earnings, we use random forest and linear regression models. The linear model performed better than the random forest model among the techniques, showing that sometimes the easiest approaches can produce the best results. Additionally, Recipe 1 produced the best profit prediction model, demonstrating its capacity to identify important correlations. Members in the industry can improve their strategies and adapt to the changing surroundings of the film industry thanks to the essential knowledge this thorough research provides. It also sets the groundwork for future research on factors influencing film industry success.
-
-
-Goals/Research Question:This analysis's primary goal is to investigate the key variables  that are influencing movie profitability in the setting of online sales. By analyzing the relationships between genres, audience ratings, financial success, and production costs, the study aims to provide useful insights that can improve choices in the film industry. The following question is specifically examined: "How do net profits relate to production budgets and revenues? "Additionally, the analysis aims to find features which greatly affect sales, such as genre or the Internet Movie Database ratings. It looks at how production budgets and revenues affect net profits and how well statistical approaches like random forests and linear regression predict revenue. Through the look of these objectives, this study provides an approach for understanding the financial side of filmmaking and identifies strategies for maximizing earnings and adjusting to changes in consumer tastes.
----
+Final Project - Analyzing Movie Industry Trends: Key Factors in Profitability
 
 #Load packages
 ```{r}
@@ -27,17 +21,21 @@ library(randomForest)
 #Load datasets
 ```{r}
 movie_industry<- read.csv("https://raw.githubusercontent.com/khushisatra/Final-Project/refs/heads/main/movies.csv")
-
 movie_industry$rating[movie_industry$rating == "" ] <- NA
 movie_industry <- na.omit(movie_industry)
 ```
 
+Introduction
+This project looks into the financial trends and engagement in the movie industry (specifically referenced from here1), targeting key factors like earnings, generating revenue, and the overall perception of each movie. Using our understanding of R analysis, the project examines data patterns to gain knowledge into what drives the movie indsutry's success. In order to look into the correlations among variables like movie genres, fabrication of budgets, gross revenue, and audience ratings, the project involves organizing and arranging the data, producing data visualizations, and building statistical models. Our initial understanding leads us to the theory that genres or categories with a moderate production costs and higher audience assessments are more likely to be profitable. For manufacturers, businesses, and the filmmakers looking for ways to optimize their funding, investments and focus on the most profitable segments of the film industry, this expected conclusion is meant to offer insightful information. 
 
-#Step 1: Tidying 
+Goals/Research Question
+The goal of this analysis is to respond to the following research question: which variables affect the earnings of films, and what is the correlation between consumers ratings, genres and their critical and economic success? It aims to address this by examining the Movie Industry Database's1 gross revenue and its budget, to then look at the profit altogether. In doing so, we are able to contrast profit using both categorical (such as movie genre and ratings) and continuous variables (such as IMDb score and budget), we aim to understand how these factors interact to influence film profitability and on what scale of impact. 
+
+
+Tidying 
 To clean this data set, we want to make sure that we removed all non-applicable values to ensure consistency and more accurate calculations - this includes values that are unknown, missing, and empty. We also standardized the movie ratings to give a clearer definition, and amplified the movie's duration. Furthermore, we were curious in the profit of these movies, and any relation with other features complementing profit; therefore we calculated said profit for each movie using its gross and budget data. The net profit for a movie indicates whether it made a profit or incurred a loss, with a positive value indicating more profit than production costs, which will become our key target variable throughout this report.
 
 ```{r}
-
 clean_movie_industry <- movie_industry|>
   mutate(
   released_date = str_extract(released, "^[A-Za-z]+ \\d{1,2}, \\d{4}"),
@@ -111,7 +109,7 @@ ggplot(genre_comparison, aes(x = reorder(genre, avg_profit), y = IMDb_score, fil
   theme_minimal()
 ```
 
-#Spliting 
+Spliting 
 Before modelling, we want to split the data to properly prepare for evaluation. By splitting the data into these three sets before applying the recipes, we ensure that the models are not overfitting to the training data and can generalize well to new data. 
 ```{r}
 clean_movie_industry_split <- initial_validation_split(clean_movie_industry, prop = c(0.6,0.2)) 
@@ -123,7 +121,7 @@ clean_movie_industry_split <- initial_validation_split(clean_movie_industry, pro
 clean_movie_industry_split
 ```
 
-#Recipes
+Recipes
 The recipes are utilized to preprocess data, creating dummy variables for categorical predictors and incorporating interaction terms, preparing it for the models furthermore and capturing its relationships.
 ```{r}
 basic_recipe1 <- recipe(profit_mil ~ gross_revenue_mil + rating + genre + IMDb_score , data =  clean_movie_ind_train)|> 
@@ -141,7 +139,7 @@ clean_movie_ind_recipes <- list(
 
 clean_movie_ind_recipes
 ```
-#Linear Model 1 - Relationship Between Gross Revenue and Profit by Movie Rating: 
+Linear Model 1 - Relationship Between Gross Revenue and Profit by Movie Rating: 
 This linear model examines the relationship between gross revenue and profit for movies, revealing how revenue predicts profitability and how movie ratings influence this relationship. 
 
 The scatterplot shows individual movies as points, with gross revenue on the x-axis, profit on the y-axis, and ratings distinguished by color. The plot reveals a strong positive linear relationship between gross revenue and profit, indicating that higher revenue consistently leads to increased profitability across movies. Ratings appear to have minimal impact on this trend, with most movies aligning closely to the trendline regardless of their category. Outliers, such as blockbuster films (specifically PG-13 rating) with exceptionally high revenue and profit, and niche categories like TV-MA movies with lower performance, provide areas for further investigation.This analysis is crucial for understanding financial dynamics, identifying cost inefficiencies, and optimizing business decisions in movie production.
@@ -158,7 +156,7 @@ ggplot(clean_movie_ind_train, aes(x = gross_revenue_mil, y = profit_mil, colour 
   )
 ```
 
-#Linear Model 2: Relationship between IMDb Score and Profit by Genre
+Linear Model 2: Relationship between IMDb Score and Profit by Genre
 This second linear model explores the interaction between IMDb score and genre on profit, aiming to identify any combined effects these factors have on the financial success of movies.
 
 The scatterplot illustrates the relationship between the interaction term (IMDb_score * genre) and profit. A linear regression line is added to show the overall trend. The plot indicates that while there is a wide spread of profits across different IMDb scores and genres, the regression line suggests a minimal positive trend with some degree of flatness. This implies that the combined effect of IMDb scores and genres on profit is relatively weak, with little interaction driving substantial changes in profitability.
@@ -172,13 +170,13 @@ ggplot(clean_movie_ind_train, aes(x = IMDb_score, y = profit_mil, color = genre)
     theme_minimal()
 ```
 
-#Workflow Creation
+Workflow Creation
 ```{r}
 movies_workflow_set <- workflow_set(clean_movie_ind_recipes,models = list(lm= linear_reg()), cross = FALSE)
 
 movies_workflow_set
 ```
-#RMSE Calculation
+RMSE Calculation
 ```{r}
 set.seed(0474100)
 
@@ -199,7 +197,7 @@ movies_fit |>
 ```
 After doing the calculation, we chose recipe1_lm instead of recipe2_lm because recipe1_lm has lower RMSE and higher R-squared which indicates better performance. 
 
-#Reduced Features
+Reduced Features
 ```{r}
 reduced_basic_recipe1 <- recipe(profit_mil ~ gross_revenue_mil + genre + IMDb_score , data =  clean_movie_ind_train)|> #removed rating
     step_dummy(all_nominal_predictors()) 
@@ -217,14 +215,14 @@ reduced_movie_recipes <- list(
 reduced_movie_recipes
 ```
 
-#Workflow for reduced features
+Workflow for reduced features
 ```{r}
 reduced_movies_workflow_set <- workflow_set(reduced_movie_recipes,models = list(lm= linear_reg()), cross = FALSE)
 
 reduced_movies_workflow_set
 ```
 
-#RMSE for reduced feature
+RMSE for reduced feature
 ```{r}
 set.seed(0474100)
 
@@ -245,7 +243,7 @@ reduced_movies_fit |>
 
 ```
 
-#Advanced Modelling
+Advanced Modelling
 A random forest model is generated with the same recipe as the linear model to compare the performance.
 ```{r}
 train_test <- initial_split(clean_movie_industry, prop = 0.8)
@@ -276,7 +274,7 @@ lm_versus_rf |>
 
 ```
 
-#Best Model Decision
+Best Model Decision
 "recipe1_lm" and "recipe1_rf" are chosen as the best linear model and random forest model because according to the above plot, the rmse value for both is lower compared to the one of recipe2, suggesting fewer errors in the model.
 ```{r}
 
@@ -301,7 +299,7 @@ best_rf <- lm_versus_rf |>
 best_rf
 ```
 
-#Test fit
+Test fit
 The below plot indicates that the linear model is a stronger indicator of analysis and prediction than the random forest model due to a lower RMSE and a higher r squared. The lower RMSE means that the linear model has a lower difference between observed and predicted values, while the greater r squared value means that the linear models explains the data variability better. These results suggest that the linear model is a significantly more suitable model in this context due to having a closer fit with our data.
 ```{r}
 test_lm <- last_fit(best_lm, split = clean_movie_industry_split)
@@ -343,7 +341,7 @@ bind_rows(
 ```
 ---
 Conclusion
-This analysis wanted to determine the main factors influencing movie earnings, with an emphasis on the relationship between genres , categories, consumers ratings, and economic success. According to the results, genres with equal production costs and larger Internet Movie Database scores tend to be more successful. People in the industry may find these results useful in improving their marketing strategies and choices. Using the random forest and linear regression models, we were able estimate profitability based on key factors such as budget, revenue from advertising, and Internet Movie Database ratings. In this case, nevertheless, the linear model surpassed the random forest model, pointing to that sometimes simpler methods could yield more precise predictions. In addition, the model that anticipated profit the best was the one based on Recipe 1. All things taken into account, this evaluation provides helpful information into the ways that film characteristics affect revenue, setting up the foundation for future initiatives and further research into the shifting circumstances associated to the motion picture sector.
+This analysis wanted to determine the main factors influencing movie earnings, with an emphasis on the relationship between genres , categories, consumers ratings, and economic success. According to the results, genres with equal production costs and larger Internet Movie Database scores tend to be more successful. People in the industry may find these results useful in improving their marketing strategies and choices. Using the random forest and linear regression models, we were able estimate profitability based on key factors such as budget, revenue from advertising, and Internet Movie Database ratings. In this case, nevertheless, the linear model surpassed the random forest model, pointing to that sometimes simpler methods could yield more precise predictions. In addition, the linear model that anticipated profit the best was the one based on Recipe 1. All things taken into account, this evaluation provides helpful information into the ways that film characteristics affect revenue, setting up the foundation for future initiatives and further research into the shifting circumstances associated to the motion picture sector.
 
 Limitations
 There are several restrictions on the code. The data cleaning procedure may introduce unfairness because it assumes that missing assessments should be set to `NA` or specific groups. Using `na.omit()` could result in the loss of significant data without dealing with the causes of missing values. It is unclear why certain feature development choices such as converting ratings and genres to variables and creating the `movie_duration` variable, were made. The outliers are not taken into account in the exploratory plots, which could skew the findings. For high values, the linear model's reliance on linear relationships might not hold true. Additional hyperparameter, which adjustment and verification must be done for the random forest model. In addition, the validation method lacks strong crossover validation and depends on an easily understood split. Plot design and scaling problems could also be fixed. The reliability and comprehension of the analysis could be improved by addressing these limitations.
@@ -356,5 +354,7 @@ References
 
 3. U.S. & Canada: PG-13 films' box office market share 2023 | Statista: https://www.statista.com/statistics/792505/domestic-box-office-pg-13-movies-market-share/
 
-4. https://www.tmwr.org/recipes
+4. RMSE vs. R-Squared: Which Metric Should You Use? (Zach Bobbit, 2021): https://www.statology.org/rmse-vs-r-squared/
+
+5. 8 Feature Engineering with recipes | Tidy Modeling with R: https://www.tmwr.org/recipes 
 
