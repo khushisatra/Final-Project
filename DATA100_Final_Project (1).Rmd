@@ -16,6 +16,7 @@ theme_set(theme_bw())
 library(arrow)
 library(tidymodels)
 tidymodels_prefer()
+library(randomForest)
 ```
 #Load datasets
 ```{r}
@@ -113,14 +114,12 @@ clean_movie_industry_split
 
 #Recipes
 ```{r}
-basic_recipe1 <- recipe(profit_mil ~ gross_revenue_mil + rating +genre + country , data =  clean_movie_ind_train)|> 
+basic_recipe1 <- recipe(profit_mil ~ gross_revenue_mil + rating + genre + IMDb_score , data =  clean_movie_ind_train)|> 
     step_dummy(all_nominal_predictors()) 
 
 interaction_recipe2 <- recipe(profit_mil ~ genre + country + IMDb_score + user_votes + budget_mil, data = clean_movie_ind_train) |>
   step_interact(~ IMDb_score:genre) |>
-  step_log(IMDb_score, base = 10) |>
-  step_normalize(all_numeric_predictors(), -all_outcomes())|>
-  step_dummy(all_nominal_predictors())
+  step_log(IMDb_score, base = 10) 
 
 
 clean_movie_ind_recipes <- list(
@@ -179,14 +178,12 @@ movies_fit |>
 
 #Reduced Features
 ```{r}
-reduced_basic_recipe1 <- recipe(profit_mil ~ gross_revenue_mil + genre + country , data =  clean_movie_ind_train)|> #removed rating
+reduced_basic_recipe1 <- recipe(profit_mil ~ gross_revenue_mil + genre + IMDb_score , data =  clean_movie_ind_train)|> #removed rating
     step_dummy(all_nominal_predictors()) 
 
 reduced_interaction_recipe2 <- recipe(profit_mil ~ genre + IMDb_score + budget_mil, data = clean_movie_ind_train) |> # removed user_votes, country
   step_interact(~ IMDb_score:genre) |>
-  step_log(IMDb_score, base = 10) |>
-  step_normalize(all_numeric_predictors(), -all_outcomes())|>
-  step_dummy(all_nominal_predictors())
+  step_log(IMDb_score, base = 10) 
 
 
 reduced_movie_recipes <- list(
@@ -303,7 +300,7 @@ bind_rows(
     .id = "model"
 ) |>
     ggplot() +
-    aes(x = Profit, y = .pred, colour = model) +
+    aes(x = profit_mil, y = .pred, colour = model) +
     geom_point(shape = 1)
 
 bind_rows(
