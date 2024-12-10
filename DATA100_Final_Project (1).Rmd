@@ -75,7 +75,7 @@ ggplot(profit_revenue, aes(x = reorder(genre, value), y = value/1e6, fill = metr
   #facet_grid(rows = vars(metric))+
   coord_flip() +
   labs(title = "Comparison of Profit and Revenue by Genre",
-       x = "Genre", y = "Value in MIllions ($)", fill = "Metric",
+       x = "Genre", y = "Value in Millions ($)", fill = "Metric",
        caption = "Source: movies_industry dataset") +
   theme_minimal()
 ```
