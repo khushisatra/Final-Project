@@ -59,7 +59,7 @@ gross = round(gross/1000000,2)
     user_votes = votes,
     gross_revenue = gross,
     gross_revenue_mil = gross,
-     profit_mil = profit,
+     profit_mil = Profit,
       budget_mil = budget
   )
   
@@ -156,6 +156,11 @@ ggplot(clean_movie_ind_train, aes(x = gross_revenue/1e6 , y = (Profit/1e6), colo
 ```
 
 #Linear Model 2
+This second linear model explores the interaction between IMDb score and genre on profit, aiming to identify any combined effects these factors have on the financial success of movies.
+
+The scatterplot illustrates the relationship between the interaction term (IMDb_score * genre) and profit. A linear regression line is added to show the overall trend. The plot indicates that while there is a wide spread of profits across different IMDb scores and genres, the regression line suggests a minimal positive trend with some degree of flatness. This implies that the combined effect of IMDb scores and genres on profit is relatively weak, with little interaction driving substantial changes in profitability.
+
+The results suggest that IMDb score and genre, when considered together, do not have a strong predictive relationship with profit, highlighting that other factors likely play a more significant role in driving movie profits. This insight is valuable for understanding the complexity of movie profitability, indicating that focusing on either IMDb scores or genre alone may not be sufficient for predicting financial success.
 ```{r}
 ggplot(clean_movie_ind_train, aes(x = IMDb_score * as.numeric(genre), y = Profit/1e6)) +
   geom_point(alpha = 0.6) +
@@ -167,6 +172,9 @@ ggplot(clean_movie_ind_train, aes(x = IMDb_score * as.numeric(genre), y = Profit
   )
 
 ```
+
+Workflow
+This code sets up a linear regression model workflow using the predefined recipesIt tunes the model on a validation set and collects metrics, which are then visualized in a bar plot to compare model performance across different evaluation criteria.
 ```{r}
 movies_workflow_set <- workflow_set(clean_movie_ind_recipes,models = list(lm= linear_reg()), cross = FALSE)
 
@@ -191,7 +199,10 @@ movies_fit |>
     geom_col(fill = "lightgrey", colour = "black") +
     facet_wrap(~ .metric, scales = "free")
 ```
+
 Comparing RMSE based on removing one feature
+
+```
 reduced_movies_workflow_set <- workflow_set(reduced_movie_recipes,models = list(lm= linear_reg()), cross = FALSE)
 
 reduced_movies_workflow_set
@@ -205,15 +216,18 @@ reduced_movies_fit <- reduced_movies_workflow_set |>
 
 reduced_movies_fit
 
-Plot for Results
+#Plot for Results
 reduced_movies_fit |>
     collect_metrics() |>
     ggplot() +
     aes(x = wflow_id, y = mean) +
     geom_col(fill = "lightgrey", colour = "black") +
     facet_wrap(~ .metric, scales = "free")
+```
 
 Advanced Modelling
+To highlight the best-performning workflow, we split the dataset into training and testing sets and then sets up two models: linear regression (lm) and random forest (rf). The models are applied to two different preprocessing recipes and evaluated. The results are visualized with a plot comparing the RMSE performance of both models, highlighting the best-performing workflow.
+
 ```{r}
 train_test <- initial_split(clean_movie_industry, prop = 0.8)
 
@@ -264,7 +278,9 @@ best_rf <- lm_versus_rf |>
 
 best_rf
 ```
-#test fit
+Test Fit
+This code evaluates the performance of the best linear regression (best_lm) and random forest (best_rf) models on the test set using the last_fit function. It prints out the best RMSE and R² values for both models and extracts the predictors used in each model. The code then plots the predicted versus observed values for both models and visualizes the metrics, such as RMSE and R², using bar charts. This helps compare the models' predictions and performance across different metrics, and ultimately the best model. 
+
 ```{r}
 test_lm <- last_fit(best_lm, split = clean_movie_industry_split)
 
