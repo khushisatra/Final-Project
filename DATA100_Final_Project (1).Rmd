@@ -4,9 +4,16 @@ authors: "Khushi Satra, 203383100
           Satinder Kaur, 169109308
           Sara Haifa, 169087012
           Spencer Mozeg , 169099531
-          Noya Barak, 
+          Noya Barak, 169097527
 ---
+Introduction: 
+This project looks into the online sale trends in the movie industry, targeting key factors like earnings, generating revenue, and consumers being received. Using strong R measures such as tidyverse and ggplot2, the project examines data patterns to gain knowledge into what drives business success. In order to look into the correlations among variables like movie genres, fabrication  of budgets, income, and audience ratings, the project involves organizing and arranging the data, producing data visualizations, and building statistical models. Our initial understanding leads us to the theory that genres or categories with a moderate production costs and higher audience assessments are more likely to be profitable.  For manufacturers, businesses, and the filmmakers looking for ways to optimize their funding, investments and focus on the most profitable segments of the film industry, this expected conclusion is meant to offer insightful information.
 
+Goals/Research Question:
+The goal of this analysis is to respond to the following research question: which variables affect the earnings of films, and what is the correlation between consumers ratings and genres and their critical and economic success? This project aims to address this by examining the Internet Movie Database score payments, contrasting typical earnings and sales by genre, and forecasting profit using attributes like income and assessment. The necessary packages (tidyverse, tidymodels, ggplot2) are installed, the dataset is cleaned, and then modifications are used to generate new variables like earnings, generate movie durations, and establish a consistent format. For clarity, variables are renamed and insignificant ratings have been removed. Examining the Internet Movie Database score variations across genres and displaying typical profit and revenue by genre are examples of exploratory research that highlights consumers and economic patterns. Using trend lines and scatter plots, still early demonstrating examines the connection between revenue and profit. In the future, recipes will be enhanced, new models will be created, and their effectiveness will be evaluated using figures like R2 or RMSE. Further insights into the revenues and public reaction patterns of the industry may be obtained through extra research, such as graphs of correlation or time-based trends. This workflow provides an all-encompassing method for comprehending and forecasting significant variables in the film industry.
+
+
+---
 
 #Load packages
 ```{r}
