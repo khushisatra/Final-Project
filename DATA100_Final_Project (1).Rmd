@@ -361,3 +361,4 @@ References
 
 6. https://statisticsbyjim.com/basics/data-types/
 
+7. https://medium.com/@amit25173/linear-regression-vs-random-forest-7288522be3aa
