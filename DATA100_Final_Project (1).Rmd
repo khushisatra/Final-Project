@@ -6,6 +6,8 @@ authors: "Khushi Satra, 203383100
           Spencer Mozeg , 169099531
           Noya Barak, 169097527"
 ---
+Final Project - Analyzing Movie Industry Trends: Key Factors in Profitability
+
 Introduction 
 This project looks into the online sale trends in the movie industry, targeting key factors like earnings, generating revenue, and consumers being received. Using strong R measures such as tidyverse and ggplot2, the project examines data patterns to gain knowledge into what drives business success. In order to look into the correlations among variables like movie genres, fabrication  of budgets, income, and audience ratings, the project involves organizing and arranging the data, producing data visualizations, and building statistical models. Our initial understanding leads us to the theory that genres or categories with a moderate production costs and higher audience assessments are more likely to be profitable.  For manufacturers, businesses, and the filmmakers looking for ways to optimize their funding, investments and focus on the most profitable segments of the film industry, this expected conclusion is meant to offer insightful information.
 
