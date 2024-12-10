@@ -56,7 +56,10 @@ gross = round(gross/1000000,2)
   rename(
     IMDb_score = score,
     user_votes = votes,
-    gross_revenue = gross
+    gross_revenue = gross,
+    gross_revenue_mil = gross,
+     profit_mil = profit,
+      budget_mil = budget
   )
   
 clean_movie_industry
