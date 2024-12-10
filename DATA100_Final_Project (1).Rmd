@@ -130,7 +130,9 @@ clean_movie_ind_recipes
 Linear Model 1 - Relationship Between Gross Revenue and Profit by Movie Rating: 
 This linear model examines the relationship between gross revenue and profit for movies, revealing how revenue predicts profitability and how movie ratings influence this relationship. 
 
-The scatterplot shows individual movies as points, with gross revenue on the x-axis, profit on the y-axis, and ratings distinguished by color. The plot reveals a strong positive linear relationship between gross revenue and profit, indicating that higher revenue consistently leads to increased profitability across movies. Ratings appear to have minimal impact on this trend, with most movies aligning closely to the trendline regardless of their category. Outliers, such as blockbuster films with exceptionally high revenue and profit, and niche categories like TV-MA movies with lower performance, provide areas for further investigation.This analysis is crucial for understanding financial dynamics, identifying cost inefficiencies, and optimizing business decisions in movie production.
+The scatterplot shows individual movies as points, with gross revenue on the x-axis, profit on the y-axis, and ratings distinguished by color. The plot reveals a strong positive linear relationship between gross revenue and profit, indicating that higher revenue consistently leads to increased profitability across movies. Ratings appear to have minimal impact on this trend, with most movies aligning closely to the trendline regardless of their category. Outliers, such as blockbuster films (specifically PG-13 rating) with exceptionally high revenue and profit, and niche categories like TV-MA movies with lower performance, provide areas for further investigation.This analysis is crucial for understanding financial dynamics, identifying cost inefficiencies, and optimizing business decisions in movie production.
+
+In fact, according to Axios2,  an analysis of box office performance by movie ratings from 1995 to 2022 shows that PG-13 films generally outperform movies with both higher and lower ratings. G-rated films tend to perform the worst, followed by PG and then R-rated movies. Statista3 reports that in 2022, PG-13 movies made up approximately two-thirds of U.S. box office revenue.
 
 ```{r}
 ggplot(clean_movie_ind_train, aes(x = gross_revenue/1e6 , y = (Profit/1e6), colour = rating)) +
@@ -277,7 +279,12 @@ Conclusion: ​​This analysis wanted to determine the main factors influencing
 Limitations: There are several restrictions on the code. The data cleaning procedure may introduce unfairness because it assumes that missing assessments should be set to `NA` or specific groups. Using `na.omit()` could result in the loss of significant data without dealing with the causes of missing values. It is unclear why certain feature development choices such as converting ratings and genres to variables and creating the `movie_duration` variable, were made. The outliers are not taken into account in the exploratory plots, which could skew the findings. For high values, the linear model's reliance on linear relationships might not hold true. Additional hyperparameter, which adjustment and verification must be done for the random forest model. In addition, the validation method lacks strong crossover validation and depends on an easily understood split. Plot design and scaling problems could also be fixed. The reliability and comprehension of the analysis could be improved by addressing these limitations.
 ---
 
+References 
+1. Movie Industry (Daniel Grijalva, updated 3 years ago): https://www.kaggle.com/datasets/danielgrijalvas/movies 
 
+2. R-rated movies hit lowest box office share in more than 25 years (Sara Fischer, 2022) : https://www.axios.com/2022/08/16/r-rate-movies-box-office 
+
+3. U.S. & Canada: PG-13 films' box office market share 2023 | Statista: https://www.statista.com/statistics/792505/domestic-box-office-pg-13-movies-market-share/
 
 
 
