@@ -358,3 +358,5 @@ References
 
 5. 8 Feature Engineering with recipes | Tidy Modeling with R: https://www.tmwr.org/recipes 
 
+6. https://statisticsbyjim.com/basics/data-types/
+
