@@ -4,7 +4,7 @@ authors: "Khushi Satra, 203383100
           Satinder Kaur, 169109308
           Sara Haifa, 169087012
           Spencer Mozeg , 169099531
-          Noya Barak 169097527, 
+          Noya Barak, 169097527"
 ---
 
 #Load packages
