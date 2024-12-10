@@ -201,6 +201,7 @@ movies_fit |>
     geom_col(fill = "lightgrey", colour = "black") +
     facet_wrap(~ .metric, scales = "free")
 ```
+After doing the calculation, we chose recipe1_lm instead of recipe2_lm because recipe1_lm has lower RMSE and higher R-squared which indicates better performance. 
 
 #Reduced Features
 ```{r}
