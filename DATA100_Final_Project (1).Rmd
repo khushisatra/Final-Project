@@ -250,6 +250,7 @@ reduced_movies_fit |>
 ```
 
 #Advanced Modelling
+A random forest model is generated with the same recipe as the linear model to compare the performance.
 ```{r}
 train_test <- initial_split(clean_movie_industry, prop = 0.8)
 
