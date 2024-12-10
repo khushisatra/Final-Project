@@ -1,0 +1,326 @@
+---
+title: "Final Project: Online Sales Analysis "
+authors: "Khushi Satra, 203383100
+          Satinder Kaur, 169109308
+          Sara Haifa, 169087012
+          Spencer Mozeg , 169099531
+          Noya Barak, 
+---
+
+
+#Load packages
+```{r}
+library(tidyverse)
+library(ggrepel)
+theme_set(theme_bw())
+library(arrow)
+library(tidymodels)
+tidymodels_prefer()
+```
+#Load datasets
+```{r}
+movie_industry<- read.csv("https://raw.githubusercontent.com/khushisatra/Final-Project/refs/heads/main/movies.csv")
+
+movie_industry$rating[movie_industry$rating == "" ] <- NA
+movie_industry <- na.omit(movie_industry)
+```
+
+
+#Step 1: Tidying 
+```{r}
+
+clean_movie_industry <- movie_industry|>
+  mutate(
+  released_date = str_extract(released, "^[A-Za-z]+ \\d{1,2}, \\d{4}"),
+  hours = runtime%/%60,             
+    minutes = runtime %% 60, 
+    movie_duration = sprintf("%d hours, %d minutes", hours, minutes),
+  rating = ifelse(rating == "X", "NC-17",
+                         ifelse(rating == "Approved", "G", rating)),
+   Profit = gross - budget
+  ) |>
+  select(-released, -year, -hours, -minutes, -runtime)|>
+  filter(rating != "Not Rated" & rating != "Unrated")|>
+   mutate(genre = as.factor(genre),
+  rating = as.factor(rating))|>
+  mutate(
+    budget = round(budget/1000000, 2),
+    Profit = round(Profit/1000000, 2),
+    gross = round(gross/1000000,2)
+  )|>
+  rename(
+    IMDb_score = score,
+    user_votes = votes,
+    gross_revenue_mil = gross,
+    profit_mil = Profit,
+    budget_mil = budget
+  )
+  
+clean_movie_industry
+
+```
+
+#Exploratory Plot 1 - Visualize Average Profit and Revenue By Genre
+```{r}
+profit_revenue <- clean_movie_industry|>
+  group_by(genre)|>
+  summarise(avg_profit = mean(profit_mil, na.rm = TRUE),
+            avg_revenue = mean(gross_revenue_mil, na.rm = TRUE))|>
+  pivot_longer(cols = c(avg_profit, avg_revenue), 
+               names_to = "metric", 
+               values_to = "value")
+
+ggplot(profit_revenue, aes(x = reorder(genre, value), y = value, fill = metric)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  coord_flip() +
+  labs(title = "Comparison of Profit and Revenue by Genre",
+       x = "Genre", y = "Value in MIllions ($)", fill = "Metric",
+       caption = "Source: movies_industry dataset") +
+  theme_minimal()
+```
+
+#Exploratory Plot 2 - Compare IMDb scores and profits across genres
+```{r}
+genre_summary <- clean_movie_industry|>
+  group_by(genre) |>
+  summarise(avg_profit = mean(profit_mil))|>
+  arrange(desc(avg_profit))
+
+genre_comparison <- clean_movie_industry|>
+  left_join(genre_summary, by = "genre" )
+
+ggplot(genre_comparison, aes(x = reorder(genre, avg_profit), y = IMDb_score, fill = avg_profit)) +
+  geom_boxplot(outlier.color = "red", outlier.shape = 16, outlier.size = 2) +
+  coord_flip() +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Avg Profit in Million ($)") +
+  labs(title = "Distribution of IMDb Scores by Genre", 
+       subtitle = "Coloured by Average Profit in Millions ($)",
+       x = "Genre (Ordered by Avg Profit)", 
+       y = "IMDb Score") +
+  theme_minimal()
+```
+
+#Spliting 
+```{r}
+clean_movie_industry_split <- initial_validation_split(clean_movie_industry, prop = c(0.6,0.2)) 
+  
+  clean_movie_ind_val <- validation(clean_movie_industry_split)
+  clean_movie_ind_train <- training(clean_movie_industry_split)
+  clean_movie_ind_test <- testing(clean_movie_industry_split)
+  
+clean_movie_industry_split
+```
+
+#Recipes
+```{r}
+basic_recipe1 <- recipe(profit_mil ~ gross_revenue_mil + rating +genre + country , data =  clean_movie_ind_train)|> 
+    step_dummy(all_nominal_predictors()) 
+
+interaction_recipe2 <- recipe(profit_mil ~ genre + country + IMDb_score + user_votes + budget_mil, data = clean_movie_ind_train) |>
+  step_interact(~ IMDb_score:genre) |>
+  step_log(IMDb_score, base = 10) |>
+  step_normalize(all_numeric_predictors(), -all_outcomes())|>
+  step_dummy(all_nominal_predictors())
+
+
+clean_movie_ind_recipes <- list(
+  recipe1 = basic_recipe1,
+  recipe2 = interaction_recipe2
+  )
+
+clean_movie_ind_recipes
+```
+#Linear Model 1 
+```{r}
+ggplot(clean_movie_ind_train, aes(x = gross_revenue_mil, y = profit_mil, colour = rating)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, color = "blue")+
+  labs(
+    title = "Interaction between Gross Revenue and Profit",
+    x = "Gross Revenue in Million ($)",
+    y = "Profit in Million ($)"
+  )
+```
+
+#Linear Model 2
+```{r}
+ggplot(clean_movie_ind_train, aes(x = IMDb_score, y = profit_mil, color = genre)) +
+    geom_point(alpha = 0.6) +
+    geom_smooth(method = "lm", se= FALSE, color = "blue") +
+    labs(title = "Profit vs IMDb Score by Genre", x = "IMDb Score", y = "Profit") +
+    theme_minimal()
+```
+
+#Workflow Creation
+```{r}
+movies_workflow_set <- workflow_set(clean_movie_ind_recipes,models = list(lm= linear_reg()), cross = FALSE)
+
+movies_workflow_set
+```
+#RMSE Calculation
+```{r}
+set.seed(0474100)
+
+movies_fit <- movies_workflow_set |>
+  workflow_map(fn = "tune_grid",
+               seed = 100,
+               resamples = validation_set(clean_movie_industry_split))
+
+movies_fit
+
+# Plot for results
+movies_fit |>
+    collect_metrics() |>
+    ggplot() +
+    aes(x = wflow_id, y = mean) +
+    geom_col(fill = "lightgrey", colour = "black") +
+    facet_wrap(~ .metric, scales = "free")
+```
+
+#Reduced Features
+```{r}
+reduced_basic_recipe1 <- recipe(profit_mil ~ gross_revenue_mil + genre + country , data =  clean_movie_ind_train)|> #removed rating
+    step_dummy(all_nominal_predictors()) 
+
+reduced_interaction_recipe2 <- recipe(profit_mil ~ genre + IMDb_score + budget_mil, data = clean_movie_ind_train) |> # removed user_votes, country
+  step_interact(~ IMDb_score:genre) |>
+  step_log(IMDb_score, base = 10) |>
+  step_normalize(all_numeric_predictors(), -all_outcomes())|>
+  step_dummy(all_nominal_predictors())
+
+
+reduced_movie_recipes <- list(
+  reduced_recipe1 = reduced_basic_recipe1,
+  reduced_recipe2 = reduced_interaction_recipe2
+  )
+
+reduced_movie_recipes
+```
+
+#Workflow for reduced features
+```{r}
+reduced_movies_workflow_set <- workflow_set(reduced_movie_recipes,models = list(lm= linear_reg()), cross = FALSE)
+
+reduced_movies_workflow_set
+```
+
+#RMSE for reduced feature
+```{r}
+set.seed(0474100)
+
+reduced_movies_fit <- reduced_movies_workflow_set |>
+  workflow_map(fn = "tune_grid",
+               seed = 100,
+               resamples = validation_set(clean_movie_industry_split))
+
+reduced_movies_fit
+
+#Plot for Results
+reduced_movies_fit |>
+    collect_metrics() |>
+    ggplot() +
+    aes(x = wflow_id, y = mean) +
+    geom_col(fill = "lightgrey", colour = "black") +
+    facet_wrap(~ .metric, scales = "free")
+
+```
+
+#Advanced Modelling
+```{r}
+train_test <- initial_split(clean_movie_industry, prop = 0.8)
+
+rf <- rand_forest(trees = 1000, mtry = tune(), min_n = 3) |>
+    set_engine("randomForest") |>
+    set_mode("regression")
+tune_grid <- tibble(mtry = 1:3)
+
+lm_versus_rf <- workflow_set(
+  preproc = list(
+    recipe1 = basic_recipe1,
+    recipe2 = interaction_recipe2
+  ),
+  models = list(lm= linear_reg(), rf = rf)
+  ) |>
+    workflow_map(
+        fn = "tune_grid",
+        grid = tune_grid,
+        seed = 100,
+        control = control_grid(save_pred = TRUE, save_workflow = TRUE),
+        resamples = vfold_cv(training(clean_movie_industry_split), v = 5)
+    )
+
+lm_versus_rf |>
+    autoplot(select_best = TRUE, metric = "rmse") +
+    geom_label_repel(aes(label = wflow_id))
+
+```
+
+#Best Model Decision
+```{r}
+
+best_lm_workflow <- lm_versus_rf |>
+    extract_workflow_set_result("recipe1_lm") |>
+    select_best(metric = "rmse") 
+
+best_lm <- lm_versus_rf |>
+  extract_workflow("recipe1_lm") |>
+  finalize_workflow(best_lm_workflow)
+
+best_lm
+
+best_rf_workflow <- lm_versus_rf |>
+  extract_workflow_set_result("recipe1_rf") |>
+  select_best(metric = "rmse")
+
+best_rf <- lm_versus_rf |>
+  extract_workflow("recipe1_rf") |>
+  finalize_workflow(best_rf_workflow)
+
+best_rf
+```
+
+#Test fit
+```{r}
+test_lm <- last_fit(best_lm, split = clean_movie_industry_split)
+
+test_rf <- last_fit(best_rf, split = clean_movie_industry_split)
+
+cat("\nBest RMSE and R^2:\n")
+bind_rows(
+    lm = collect_metrics(test_lm),
+    rf = collect_metrics(test_rf),
+    .id = "model"
+)
+
+cat("\nPredictors used:\n")
+extract_recipe(test_lm) |> formula()
+extract_recipe(test_rf) |> formula()
+
+# Plot the predictions versus observed
+bind_rows(
+    lm = collect_predictions(test_lm),
+    rf = collect_predictions(test_rf),
+    .id = "model"
+) |>
+    ggplot() +
+    aes(x = Profit, y = .pred, colour = model) +
+    geom_point(shape = 1)
+
+bind_rows(
+    lm = test_lm,
+    rf = test_rf,
+    .id = "model"
+) |>
+    # This is almost certainly a better way to do this, but I do not know it.
+    unnest_wider(.metrics) |>
+    unnest_longer(c(.metric, .estimator, .estimate, .config)) |>
+    ggplot() +
+    aes(x = model, y = .estimate) +
+    geom_col(fill = "lightgrey", color = 1) +
+    facet_wrap(~ .metric, scales = "free_y")
+```
+
+
+
+
+
