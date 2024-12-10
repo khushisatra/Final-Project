@@ -148,9 +148,8 @@ ggplot(clean_movie_ind_train, aes(x = gross_revenue/1e6 , y = (Profit/1e6), colo
 #Linear Model 2
 ```{r}
 ggplot(clean_movie_ind_train, aes(x = IMDb_score * as.numeric(genre), y = Profit/1e6)) +
-  
-  #geom_point(alpha = 0.6) +
-  #geom_smooth(method = "lm", se = FALSE) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
   labs(
     title = "Interaction between IMDb Score and Genre vs Profit",
     x = "IMDb Score * Genre (Interaction)",
