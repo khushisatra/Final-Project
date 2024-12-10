@@ -25,7 +25,11 @@ movie_industry<- read.csv("https://raw.githubusercontent.com/khushisatra/Final-P
 movie_industry$rating[movie_industry$rating == "" ] <- NA
 movie_industry <- na.omit(movie_industry)
 ```
+Introduction
+This project looks into the financial trends and engagement in the movie industry, targeting key factors like earnings, generating revenue, and the overall perception of each movie. Using our understanding of R analysis, the project examines data patterns to gain knowledge into what drives the movie indsutry's success. In order to look into the correlations among variables like movie genres, fabrication of budgets, gross revenue, and audience ratings, the project involves organizing and arranging the data, producing data visualizations, and building statistical models. Our initial understanding leads us to the theory that genres or categories with a moderate production costs and higher audience assessments are more likely to be profitable. For manufacturers, businesses, and the filmmakers looking for ways to optimize their funding, investments and focus on the most profitable segments of the film industry, this expected conclusion is meant to offer insightful information. 
 
+Goal
+The goal of this analysis is to respond to the following research question: which variables affect the earnings of films, and what is the correlation between consumers ratings, genres and their critical and economic success? It aims to address this by examining the Internet Movie Database1 gross revenue and its budget, to then look at the profit altogether. In doing so, we are able to contrast profit using both categorical (such as movie genre and ratings) and continuous variables (such as IMDb score and budget), we aim to understand how these factors interact to influence film profitability and on what scale of impact. 
 
 #Step 1: Tidying 
 ```{r}
