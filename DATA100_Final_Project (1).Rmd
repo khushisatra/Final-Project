@@ -268,7 +268,11 @@ bind_rows(
     geom_col(fill = "lightgrey", color = 1) +
     facet_wrap(~ .metric, scales = "free_y")
 ```
+---
+Conclusion: ​​This analysis wanted to determine the main factors influencing movie earnings, with an emphasis on the relationship between genres , categroies, consumers ratings, and economic success. According to the results, genres with equal production costs and larger Internet Movie Database scores tend to be more successful. People in the industry may find these results useful in improving their marketing strategies and choices. Using the random forest and linear regression models, we were able estimate profitability based on key factors such as budget, revenue from advertising, and Internet Movie Database ratings. In this case, nevertheless, the linear model surpassed the random forest model, pointing to that sometimes simpler methods could yield more precise predictions. In addition, the model that anticipated profit the best was the one based on Recipe 1. All things taken into account, this evaluation provides helpful information into the ways that film characteristics affect revenue, setting up the foundation for future initiatives and further research into the shifting circumstances associated to the motion picture sector.
 
+Limitations: There are several restrictions on the code. The data cleaning procedure may introduce unfairness because it assumes that missing assessments should be set to `NA` or specific groups. Using `na.omit()` could result in the loss of significant data without dealing with the causes of missing values. It is unclear why certain feature development choices such as converting ratings and genres to variables and creating the `movie_duration` variable, were made. The outliers are not taken into account in the exploratory plots, which could skew the findings. For high values, the linear model's reliance on linear relationships might not hold true. Additional hyperparameter, which adjustment and verification must be done for the random forest model. In addition, the validation method lacks strong crossover validation and depends on an easily understood split. Plot design and scaling problems could also be fixed. The reliability and comprehension of the analysis could be improved by addressing these limitations.
+---
 
 
 
