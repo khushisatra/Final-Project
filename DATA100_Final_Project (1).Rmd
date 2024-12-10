@@ -33,7 +33,7 @@ The goal of this analysis is to respond to the following research question: whic
 
 
 Tidying 
-To clean this data set, we want to make sure that we removed all non-applicable values to ensure consistency and more accurate calculations - this includes values that are unknown, missing, and empty. We also standardized the movie ratings to give a clearer definition, and amplified the movie's duration. Furthermore, we were curious in the profit of these movies, and any relation with other features complementing profit; therefore we calculated said profit for each movie using its gross and budget data. The net profit for a movie indicates whether it made a profit or incurred a loss, with a positive value indicating more profit than production costs, which will become our key target variable throughout this report.
+To clean this data set 8, we want to make sure that we removed all non-applicable values to ensure consistency and more accurate calculations - this includes values that are unknown, missing, and empty. We also standardized the movie ratings to give a clearer definition, and amplified the movie's duration. Furthermore, we were curious in the profit of these movies, and any relation with other features complementing profit; therefore we calculated said profit for each movie using its gross and budget data. The net profit for a movie indicates whether it made a profit or incurred a loss, with a positive value indicating more profit than production costs, which will become our key target variable throughout this report.
 
 ```{r}
 clean_movie_industry <- movie_industry|>
@@ -110,7 +110,8 @@ ggplot(genre_comparison, aes(x = reorder(genre, avg_profit), y = IMDb_score, fil
 ```
 
 Spliting 
-Before modelling, we want to split the data to properly prepare for evaluation. By splitting the data into these three sets before applying the recipes, we ensure that the models are not overfitting to the training data and can generalize well to new data. 
+Before modelling, we want to split the data to properly prepare for evaluation. By splitting the data into these three sets before applying the recipes, we ensure that the models are not overfitting to the training data7 and can generalize well to new data.
+
 ```{r}
 clean_movie_industry_split <- initial_validation_split(clean_movie_industry, prop = c(0.6,0.2)) 
   
@@ -364,6 +365,6 @@ References
 
 6. Linear Regression vs Random Forest | by Amit Yadav | Medium (Amit Yadav, 2024): https://medium.com/@amit25173/linear-regression-vs-random-forest-7288522be3aa 
 
-7. https://www.analyticsvidhya.com/blog/2023/11/train-test-validation-split/#:~:text=The%20train%20validation%20test%20split%20helps%20assess%20how%20well%20a,to%20generalize%20to%20new%20instances.
+7. Train-Test-Validation Split: A Critical Component of ML (Sakshi Raheja, 2024): https://www.analyticsvidhya.com/blog/2023/11/train-test-validation-split/#:~:text=The%20train%20validation%20test%20split%20helps%20assess%20how%20well%20a,to%20generalize%20to%20new%20instances. 
 
-8. https://www.geeksforgeeks.org/data-cleaning-in-r/
+8. Data Cleaning in R - GeeksforGeeks (2023): https://www.geeksforgeeks.org/data-cleaning-in-r/ 
