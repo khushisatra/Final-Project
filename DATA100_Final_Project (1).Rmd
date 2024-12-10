@@ -191,6 +191,28 @@ movies_fit |>
     geom_col(fill = "lightgrey", colour = "black") +
     facet_wrap(~ .metric, scales = "free")
 ```
+Comparing RMSE based on removing one feature
+reduced_movies_workflow_set <- workflow_set(reduced_movie_recipes,models = list(lm= linear_reg()), cross = FALSE)
+
+reduced_movies_workflow_set
+
+set.seed(0474100)
+
+reduced_movies_fit <- reduced_movies_workflow_set |>
+  workflow_map(fn = "tune_grid",
+               seed = 100,
+               resamples = validation_set(clean_movie_industry_split))
+
+reduced_movies_fit
+
+Plot for Results
+reduced_movies_fit |>
+    collect_metrics() |>
+    ggplot() +
+    aes(x = wflow_id, y = mean) +
+    geom_col(fill = "lightgrey", colour = "black") +
+    facet_wrap(~ .metric, scales = "free")
+
 Advanced Modelling
 ```{r}
 train_test <- initial_split(clean_movie_industry, prop = 0.8)
