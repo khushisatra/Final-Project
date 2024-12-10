@@ -121,6 +121,7 @@ clean_movie_industry_split
 ```
 
 Recipes
+The recipes are utilized to preprocess data, creating dummy variables for categorical predictors and incorporating interaction terms, preparing it for the models furthermore and capturing its relationships.
 ```{r}
 basic_recipe1 <- recipe(Profit ~ gross_revenue + rating, data =  clean_movie_ind_train)|> 
     step_dummy(all_nominal_predictors()) 
