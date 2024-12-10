@@ -109,6 +109,7 @@ ggplot(genre_comparison, aes(x = reorder(genre, avg_Profit), y = IMDb_score, fil
 ```
 
 Spliting 
+Before modelling, we want to split the data to properly prepare for evaluation. By splitting the data into these three sets before applying the recipes, we ensure that the models are not overfitting to the training data and can generalize well to new data. 
 ```{r}
 clean_movie_industry_split <- initial_validation_split(clean_movie_industry, prop = c(0.6,0.2)) 
   
