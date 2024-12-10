@@ -78,6 +78,7 @@ ggplot(profit_revenue, aes(x = reorder(genre, value), y = value, fill = metric))
        x = "Genre", y = "Value in MIllions ($)", fill = "Metric",
        caption = "Source: movies_industry dataset") +
   theme_minimal()
+#The analysis conducted shows that family movies generate significantly more profit and revenue on average relative to other genres. This suggests that the family genre is likely the largest niche within the movie industry. Another factor that is shown is that commonly  profit and revenue tend to be closely related across genres, production costs tend to be relatively low compared to revenue within the movie industry, making the profit margins high. This implies that by focusing on producing movies that are in higher revenue generating niches, profits will be maximized.
 ```
 
 #Exploratory Plot 2 - Compare IMDb scores and profits across genres
@@ -99,6 +100,7 @@ ggplot(genre_comparison, aes(x = reorder(genre, avg_profit), y = IMDb_score, fil
        x = "Genre (Ordered by Avg Profit)", 
        y = "IMDb Score") +
   theme_minimal()
+#The box plot shows that there is significant variability in IMDb scores across movie genres, with some certain genres being more spread than others. Genres like Action, Comedy, and Drama have long whiskers and numerous outliers, meaning that movies within these genres vary greatly in quality and appeal. Relative to other genres like Sci-Fi, Western and Romance have lower interquartile ranges meaning that IMDb scores tend to have more consistent scores within these categories. The disparity in IMBd scores across genres imply that movies are highly subjective and that quality tends to differ significantly across both genres and specific movies.
 ```
 
 #Spliting 
@@ -315,6 +317,8 @@ bind_rows(
     aes(x = model, y = .estimate) +
     geom_col(fill = "lightgrey", color = 1) +
     facet_wrap(~ .metric, scales = "free_y")
+#The plot indicates that the linear model is a stronger indicator of analysis and prediction than the random trees model due to a lower RMSE and a higher r squared. The lower RMSE means that the linear model has a lower difference between observed and predicted values, while the greater r squared value means that the linear models explains the data variability better. These results suggest that the linear model is a significantly more suitable model in this context due to having a closer fit with our data.
+
 ```
 
 
