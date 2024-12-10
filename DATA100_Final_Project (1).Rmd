@@ -242,6 +242,7 @@ reduced_movies_fit |>
     facet_wrap(~ .metric, scales = "free")
 
 ```
+By reducing the features, RMSE remains unchanged, the removed features were likely redundant or irrelevant. Simplifying the model by removing them is beneficial, as it retains accuracy while enhancing efficiency and interpretability.
 
 Advanced Modelling
 A random forest model is generated with the same recipe as the linear model to compare the performance.
