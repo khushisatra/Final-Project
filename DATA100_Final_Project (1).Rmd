@@ -15,7 +15,7 @@ The goal of this analysis is to respond to the following research question: whic
 
 ---
 
-#Load packages
+Load packages
 ```{r}
 library(tidyverse)
 library(ggrepel)
@@ -24,7 +24,7 @@ library(arrow)
 library(tidymodels)
 tidymodels_prefer()
 ```
-#Load datasets
+Load datasets
 ```{r}
 movie_industry<- read.csv("https://raw.githubusercontent.com/khushisatra/Final-Project/refs/heads/main/movies.csv")
 
@@ -32,8 +32,7 @@ movie_industry$rating[movie_industry$rating == "" ] <- NA
 movie_industry <- na.omit(movie_industry)
 ```
 
-
-#Step 1: Tidying 
+Tidying 
 ```{r}
 
 clean_movie_industry <- movie_industry|>
@@ -60,7 +59,7 @@ clean_movie_industry
 
 ```
 
-#Exploratory Plot 1 - Visualize Average Profit and Revenue By Genre
+Exploratory Plot #1 - Visualize Average Profit and Revenue By Genre
 ```{r}
 profit_revenue <- clean_movie_industry|>
   group_by(genre)|>
@@ -80,7 +79,7 @@ ggplot(profit_revenue, aes(x = reorder(genre, value), y = value/1e6, fill = metr
   theme_minimal()
 ```
 
-#Exploratory Plot 2 - Compare IMDb scores and profits across genres
+Exploratory Plot #2 - Compare IMDb scores and profits across genres
 ```{r}
 genre_summary <- clean_movie_industry|>
   group_by(genre) |>
@@ -101,7 +100,7 @@ ggplot(genre_comparison, aes(x = reorder(genre, avg_Profit), y = IMDb_score, fil
   theme_minimal()
 ```
 
-#Spliting 
+Spliting 
 ```{r}
 clean_movie_industry_split <- initial_validation_split(clean_movie_industry, prop = c(0.6,0.2)) 
   
@@ -112,7 +111,7 @@ clean_movie_industry_split <- initial_validation_split(clean_movie_industry, pro
 clean_movie_industry_split
 ```
 
-#Recipes
+Recipes
 ```{r}
 basic_recipe1 <- recipe(Profit ~ gross_revenue + rating, data =  clean_movie_ind_train)|> 
     step_dummy(all_nominal_predictors()) 
@@ -128,7 +127,11 @@ clean_movie_ind_recipes <- list(
 
 clean_movie_ind_recipes
 ```
-#Linear Model 1 
+Linear Model 1 - Relationship Between Gross Revenue and Profit by Movie Rating: 
+This linear model examines the relationship between gross revenue and profit for movies, revealing how revenue predicts profitability and how movie ratings influence this relationship. 
+
+The scatterplot shows individual movies as points, with gross revenue on the x-axis, profit on the y-axis, and ratings distinguished by color. The plot reveals a strong positive linear relationship between gross revenue and profit, indicating that higher revenue consistently leads to increased profitability across movies. Ratings appear to have minimal impact on this trend, with most movies aligning closely to the trendline regardless of their category. Outliers, such as blockbuster films with exceptionally high revenue and profit, and niche categories like TV-MA movies with lower performance, provide areas for further investigation.This analysis is crucial for understanding financial dynamics, identifying cost inefficiencies, and optimizing business decisions in movie production.
+
 ```{r}
 ggplot(clean_movie_ind_train, aes(x = gross_revenue/1e6 , y = (Profit/1e6), colour = rating)) +
   geom_point(alpha = 0.7) +
