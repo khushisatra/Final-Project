@@ -48,6 +48,11 @@ clean_movie_industry <- movie_industry|>
   filter(rating != "Not Rated" & rating != "Unrated")|>
    mutate(genre = as.factor(genre),
   rating = as.factor(rating))|>
+mutate(
+budget = round(budget/1000000, 2),
+Profit = round(Profit/1000000, 2),
+gross = round(gross/1000000,2)
+)|>
   rename(
     IMDb_score = score,
     user_votes = votes,
