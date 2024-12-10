@@ -177,6 +177,7 @@ movies_workflow_set <- workflow_set(clean_movie_ind_recipes,models = list(lm= li
 movies_workflow_set
 ```
 RMSE Calculation
+After doing the calculation, we chose recipe1_lm instead of recipe2_lm because recipe1_lm has lower RMSE and higher R-squared which indicates better performance. 
 ```{r}
 set.seed(0474100)
 
@@ -195,7 +196,7 @@ movies_fit |>
     geom_col(fill = "lightgrey", colour = "black") +
     facet_wrap(~ .metric, scales = "free")
 ```
-After doing the calculation, we chose recipe1_lm instead of recipe2_lm because recipe1_lm has lower RMSE and higher R-squared which indicates better performance. 
+
 
 Reduced Features
 ```{r}
@@ -223,6 +224,7 @@ reduced_movies_workflow_set
 ```
 
 RMSE for reduced feature
+By reducing the features, RMSE remains unchanged, the removed features were likely redundant or irrelevant. Simplifying the model by removing them is beneficial, as it retains accuracy while enhancing efficiency and interpretability.
 ```{r}
 set.seed(0474100)
 
@@ -242,7 +244,7 @@ reduced_movies_fit |>
     facet_wrap(~ .metric, scales = "free")
 
 ```
-By reducing the features, RMSE remains unchanged, the removed features were likely redundant or irrelevant. Simplifying the model by removing them is beneficial, as it retains accuracy while enhancing efficiency and interpretability.
+
 
 Advanced Modelling
 A random forest model is generated with the same recipe as the linear model to compare the performance.
