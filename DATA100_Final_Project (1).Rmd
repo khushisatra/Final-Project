@@ -11,8 +11,11 @@ authors: "Khushi Satra, 203383100
 #Load packages
 ```{r}
 library(tidyverse)
+library(ggrepel)
+theme_set(theme_bw())
+library(arrow)
 library(tidymodels)
-library(ggplot2)
+tidymodels_prefer()
 ```
 #Load datasets
 ```{r}
@@ -65,7 +68,8 @@ ggplot(profit_revenue, aes(x = reorder(genre, value), y = value/1e6, fill = metr
   #facet_grid(rows = vars(metric))+
   coord_flip() +
   labs(title = "Comparison of Profit and Revenue by Genre",
-       x = "Genre", y = "Value in MIllions ($)", fill = "Metric") +
+       x = "Genre", y = "Value in MIllions ($)", fill = "Metric",
+       caption = "Source: movies_industry dataset") +
   theme_minimal()
 ```
 
@@ -79,11 +83,12 @@ genre_summary <- clean_movie_industry|>
 genre_comparison <- clean_movie_industry|>
   left_join(genre_summary, by = "genre" )
 
-ggplot(genre_comparison, aes(x = reorder(genre, avg_Profit), y = IMDb_score, fill = avg_Profit)) +
+ggplot(genre_comparison, aes(x = reorder(genre, avg_Profit), y = IMDb_score, fill = avg_Profit/1e6)) +
   geom_boxplot(outlier.color = "red", outlier.shape = 16, outlier.size = 2) +
   coord_flip() +
-  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Avg Profit") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Avg Profit in Million ($)") +
   labs(title = "Distribution of IMDb Scores by Genre", 
+       subtitle = "Coloured by Average Profit in Millions ($)",
        x = "Genre (Ordered by Avg Profit)", 
        y = "IMDb Score") +
   theme_minimal()
@@ -131,8 +136,9 @@ ggplot(clean_movie_ind_train, aes(x = gross_revenue/1e6 , y = (Profit/1e6), colo
 #Linear Model 2
 ```{r}
 ggplot(clean_movie_ind_train, aes(x = IMDb_score * as.numeric(genre), y = Profit/1e6)) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm", se = FALSE) +
+  
+  #geom_point(alpha = 0.6) +
+  #geom_smooth(method = "lm", se = FALSE) +
   labs(
     title = "Interaction between IMDb Score and Genre vs Profit",
     x = "IMDb Score * Genre (Interaction)",
@@ -140,3 +146,124 @@ ggplot(clean_movie_ind_train, aes(x = IMDb_score * as.numeric(genre), y = Profit
   )
 
 ```
+```{r}
+movies_workflow_set <- workflow_set(clean_movie_ind_recipes,models = list(lm= linear_reg()), cross = FALSE)
+
+movies_workflow_set
+```
+
+```{r}
+set.seed(0474100)
+
+movies_fit <- movies_workflow_set |>
+  workflow_map(fn = "tune_grid",
+               seed = 100,
+               resamples = validation_set(clean_movie_industry_split))
+
+movies_fit
+
+# Plot for results
+movies_fit |>
+    collect_metrics() |>
+    ggplot() +
+    aes(x = wflow_id, y = mean) +
+    geom_col(fill = "lightgrey", colour = "black") +
+    facet_wrap(~ .metric, scales = "free")
+```
+#Advanced Modelling
+```{r}
+train_test <- initial_split(clean_movie_industry, prop = 0.8)
+
+rf <- rand_forest(trees = 1000, mtry = tune(), min_n = 3) |>
+    set_engine("randomForest") |>
+    set_mode("regression")
+tune_grid <- tibble(mtry = 1:3)
+
+lm_versus_rf <- workflow_set(
+  preproc = list(
+    recipe1 = basic_recipe1,
+    recipe2 = interaction_recipe2
+  ),
+  models = list(lm= linear_reg(), rf = rf)
+  ) |>
+    workflow_map(
+        fn = "tune_grid",
+        grid = tune_grid,
+        seed = 100,
+        control = control_grid(save_pred = TRUE, save_workflow = TRUE),
+        resamples = vfold_cv(training(clean_movie_industry_split), v = 5)
+    )
+
+lm_versus_rf |>
+    autoplot(select_best = TRUE, metric = "rmse") +
+    geom_label_repel(aes(label = wflow_id))
+
+```
+```{r}
+
+best_lm_workflow <- lm_versus_rf |>
+    extract_workflow_set_result("recipe1_lm") |>
+    select_best(metric = "rmse") 
+
+best_lm <- lm_versus_rf |>
+  extract_workflow("recipe1_lm") |>
+  finalize_workflow(best_lm_workflow)
+
+best_lm
+
+best_rf_workflow <- lm_versus_rf |>
+  extract_workflow_set_result("recipe1_rf") |>
+  select_best(metric = "rmse")
+
+best_rf <- lm_versus_rf |>
+  extract_workflow("recipe1_rf") |>
+  finalize_workflow(best_rf_workflow)
+
+best_rf
+```
+#test fit
+```{r}
+test_lm <- last_fit(best_lm, split = clean_movie_industry_split)
+
+test_rf <- last_fit(best_rf, split = clean_movie_industry_split)
+
+cat("\nBest RMSE and R^2:\n")
+bind_rows(
+    lm = collect_metrics(test_lm),
+    rf = collect_metrics(test_rf),
+    .id = "model"
+)
+
+cat("\nPredictors used:\n")
+extract_recipe(test_lm) |> formula()
+extract_recipe(test_rf) |> formula()
+
+# Plot the predictions versus observed
+bind_rows(
+    lm = collect_predictions(test_lm),
+    rf = collect_predictions(test_rf),
+    .id = "model"
+) |>
+    ggplot() +
+    aes(x = Profit, y = .pred, colour = model) +
+    geom_point(shape = 1)
+
+bind_rows(
+    lm = test_lm,
+    rf = test_rf,
+    .id = "model"
+) |>
+    # This is almost certainly a better way to do this, but I do not know it.
+    unnest_wider(.metrics) |>
+    unnest_longer(c(.metric, .estimator, .estimate, .config)) |>
+    ggplot() +
+    aes(x = model, y = .estimate) +
+    geom_col(fill = "lightgrey", color = 1) +
+    facet_wrap(~ .metric, scales = "free_y")
+```
+
+
+
+
+
+
