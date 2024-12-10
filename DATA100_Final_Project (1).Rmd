@@ -363,3 +363,7 @@ References
 5. 8 Feature Engineering with recipes | Tidy Modeling with R: https://www.tmwr.org/recipes 
 
 6. Linear Regression vs Random Forest | by Amit Yadav | Medium (Amit Yadav, 2024): https://medium.com/@amit25173/linear-regression-vs-random-forest-7288522be3aa 
+
+7. https://www.analyticsvidhya.com/blog/2023/11/train-test-validation-split/#:~:text=The%20train%20validation%20test%20split%20helps%20assess%20how%20well%20a,to%20generalize%20to%20new%20instances.
+
+8. https://www.geeksforgeeks.org/data-cleaning-in-r/
