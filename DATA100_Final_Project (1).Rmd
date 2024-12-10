@@ -59,6 +59,8 @@ clean_movie_industry <- movie_industry|>
   
 clean_movie_industry
 
+#The cleaning process was started by removing missing values and to ensure structural consistency. The entries with incomplete information were removed, and categorical data was properly aligned. The data was enhanced by altering and improving current variables. The categorical variables were encoded to ensure readability and consistency, for proper analysis. Lastly, the variables were renamed to easier to read and clearer titles to enhance readability and understanding.
+
 ```
 
 #Exploratory Plot 1 - Visualize Average Profit and Revenue By Genre
