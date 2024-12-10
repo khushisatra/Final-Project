@@ -6,12 +6,11 @@ authors: "Khushi Satra, 203383100
           Spencer Mozeg , 169099531
           Noya Barak, 169097527
 ---
-Introduction: 
+Introduction 
 This project looks into the online sale trends in the movie industry, targeting key factors like earnings, generating revenue, and consumers being received. Using strong R measures such as tidyverse and ggplot2, the project examines data patterns to gain knowledge into what drives business success. In order to look into the correlations among variables like movie genres, fabrication  of budgets, income, and audience ratings, the project involves organizing and arranging the data, producing data visualizations, and building statistical models. Our initial understanding leads us to the theory that genres or categories with a moderate production costs and higher audience assessments are more likely to be profitable.  For manufacturers, businesses, and the filmmakers looking for ways to optimize their funding, investments and focus on the most profitable segments of the film industry, this expected conclusion is meant to offer insightful information.
 
-Goals/Research Question:
+Goals/Research Question 
 The goal of this analysis is to respond to the following research question: which variables affect the earnings of films, and what is the correlation between consumers ratings and genres and their critical and economic success? This project aims to address this by examining the Internet Movie Database score payments, contrasting typical earnings and sales by genre, and forecasting profit using attributes like income and assessment. The necessary packages (tidyverse, tidymodels, ggplot2) are installed, the dataset is cleaned, and then modifications are used to generate new variables like earnings, generate movie durations, and establish a consistent format. For clarity, variables are renamed and insignificant ratings have been removed. Examining the Internet Movie Database score variations across genres and displaying typical profit and revenue by genre are examples of exploratory research that highlights consumers and economic patterns. Using trend lines and scatter plots, still early demonstrating examines the connection between revenue and profit. In the future, recipes will be enhanced, new models will be created, and their effectiveness will be evaluated using figures like R2 or RMSE. Further insights into the revenues and public reaction patterns of the industry may be obtained through extra research, such as graphs of correlation or time based trends. This workflow provides an all encompassing method for comprehending and forecasting significant variables in the film industry.
-
 
 ---
 
@@ -33,6 +32,7 @@ movie_industry <- na.omit(movie_industry)
 ```
 
 Tidying 
+This code cleans and transforms the movie_industry dataset by extracting the release date, splitting runtime into hours and minutes, and creating a movie_duration column. It standardizes movie ratings (e.g., "X" to "NC-17") and calculates profit by subtracting budget from gross revenue. Unnecessary columns are removed, and movies with "Not Rated" or "Unrated" ratings are filtered out. The genre and rating columns are converted to factors, and column names are renamed for clarity. These steps prepare the data for analysis by ensuring consistency, creating useful variables, and organizing the dataset.
 ```{r}
 
 clean_movie_industry <- movie_industry|>
@@ -174,7 +174,7 @@ movies_fit <- movies_workflow_set |>
 
 movies_fit
 
-# Plot for results
+Plot for Results
 movies_fit |>
     collect_metrics() |>
     ggplot() +
@@ -182,7 +182,7 @@ movies_fit |>
     geom_col(fill = "lightgrey", colour = "black") +
     facet_wrap(~ .metric, scales = "free")
 ```
-#Advanced Modelling
+Advanced Modelling
 ```{r}
 train_test <- initial_split(clean_movie_industry, prop = 0.8)
 
@@ -274,9 +274,11 @@ bind_rows(
     facet_wrap(~ .metric, scales = "free_y")
 ```
 ---
-Conclusion: ​​This analysis wanted to determine the main factors influencing movie earnings, with an emphasis on the relationship between genres , categories, consumers ratings, and economic success. According to the results, genres with equal production costs and larger Internet Movie Database scores tend to be more successful. People in the industry may find these results useful in improving their marketing strategies and choices. Using the random forest and linear regression models, we were able estimate profitability based on key factors such as budget, revenue from advertising, and Internet Movie Database ratings. In this case, nevertheless, the linear model surpassed the random forest model, pointing to that sometimes simpler methods could yield more precise predictions. In addition, the model that anticipated profit the best was the one based on Recipe 1. All things taken into account, this evaluation provides helpful information into the ways that film characteristics affect revenue, setting up the foundation for future initiatives and further research into the shifting circumstances associated to the motion picture sector.
+Conclusion
+This analysis wanted to determine the main factors influencing movie earnings, with an emphasis on the relationship between genres , categories, consumers ratings, and economic success. According to the results, genres with equal production costs and larger Internet Movie Database scores tend to be more successful. People in the industry may find these results useful in improving their marketing strategies and choices. Using the random forest and linear regression models, we were able estimate profitability based on key factors such as budget, revenue from advertising, and Internet Movie Database ratings. In this case, nevertheless, the linear model surpassed the random forest model, pointing to that sometimes simpler methods could yield more precise predictions. In addition, the model that anticipated profit the best was the one based on Recipe 1. All things taken into account, this evaluation provides helpful information into the ways that film characteristics affect revenue, setting up the foundation for future initiatives and further research into the shifting circumstances associated to the motion picture sector.
 
-Limitations: There are several restrictions on the code. The data cleaning procedure may introduce unfairness because it assumes that missing assessments should be set to `NA` or specific groups. Using `na.omit()` could result in the loss of significant data without dealing with the causes of missing values. It is unclear why certain feature development choices such as converting ratings and genres to variables and creating the `movie_duration` variable, were made. The outliers are not taken into account in the exploratory plots, which could skew the findings. For high values, the linear model's reliance on linear relationships might not hold true. Additional hyperparameter, which adjustment and verification must be done for the random forest model. In addition, the validation method lacks strong crossover validation and depends on an easily understood split. Plot design and scaling problems could also be fixed. The reliability and comprehension of the analysis could be improved by addressing these limitations.
+Limitations
+There are several restrictions on the code. The data cleaning procedure may introduce unfairness because it assumes that missing assessments should be set to `NA` or specific groups. Using `na.omit()` could result in the loss of significant data without dealing with the causes of missing values. It is unclear why certain feature development choices such as converting ratings and genres to variables and creating the `movie_duration` variable, were made. The outliers are not taken into account in the exploratory plots, which could skew the findings. For high values, the linear model's reliance on linear relationships might not hold true. Additional hyperparameter, which adjustment and verification must be done for the random forest model. In addition, the validation method lacks strong crossover validation and depends on an easily understood split. Plot design and scaling problems could also be fixed. The reliability and comprehension of the analysis could be improved by addressing these limitations.
 ---
 
 References 
