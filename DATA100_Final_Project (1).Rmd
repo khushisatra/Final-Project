@@ -177,7 +177,8 @@ movies_workflow_set <- workflow_set(clean_movie_ind_recipes,models = list(lm= li
 movies_workflow_set
 ```
 RMSE Calculation
-After doing the calculation, we chose recipe1_lm instead of recipe2_lm because recipe1_lm has lower RMSE and higher R-squared which indicates better performance. 
+After doing the calculation, we chose recipe1_lm instead of recipe2_lm because recipe1_lm has lower RMSE and higher R-squared which indicates better performance4.
+
 ```{r}
 set.seed(0474100)
 
@@ -278,7 +279,7 @@ lm_versus_rf |>
 ```
 
 Best Model Decision
-"recipe1_lm" and "recipe1_rf" are chosen as the best linear model and random forest model because according to the above plot, the rmse value for both is lower compared to the one of recipe2, suggesting fewer errors in the model.
+"recipe1_lm" and "recipe1_rf" are chosen as the best linear model and random forest model because according to the above plot, the rmse value for both is lower compared to the one of recipe2, suggesting fewer errors in the model4.
 ```{r}
 
 best_lm_workflow <- lm_versus_rf |>
@@ -303,7 +304,7 @@ best_rf
 ```
 
 Test fit
-The below plot indicates that the linear model is a stronger indicator of analysis and prediction than the random forest model due to a lower RMSE and a higher r squared. The lower RMSE means that the linear model has a lower difference between observed and predicted values, while the greater r squared value means that the linear models explains the data variability better. These results suggest that the linear model is a significantly more suitable model in this context due to having a closer fit with our data.
+The below plot indicates that the linear model is a stronger indicator of analysis and prediction than the random forest model due to a lower RMSE and a higher r squared 6. The lower RMSE means that the linear model has a lower difference between observed and predicted values, while the greater r squared value means that the linear models explains the data variability better. These results suggest that the linear model is a significantly more suitable model in this context due to having a closer fit with our data. 
 ```{r}
 test_lm <- last_fit(best_lm, split = clean_movie_industry_split)
 
@@ -361,6 +362,4 @@ References
 
 5. 8 Feature Engineering with recipes | Tidy Modeling with R: https://www.tmwr.org/recipes 
 
-6. https://statisticsbyjim.com/basics/data-types/
-
-7. https://medium.com/@amit25173/linear-regression-vs-random-forest-7288522be3aa
+6. Linear Regression vs Random Forest | by Amit Yadav | Medium (Amit Yadav, 2024): https://medium.com/@amit25173/linear-regression-vs-random-forest-7288522be3aa 
